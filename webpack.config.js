@@ -16,12 +16,12 @@ module.exports = {
     }),
   ],
   devServer: {
-    // historyApiFallback: true,
-    // port: 8080,
-    // static: {
-    //   publicPath: '/',
-    //   directory: path.resolve(__dirname, 'dist'),
-    // },
+    historyApiFallback: true,
+    port: 8080,
+    static: {
+      publicPath: '/',
+      directory: path.resolve(__dirname, 'dist'),
+    },
     proxy: {
       '/': 'http://localhost:3000',
     },
