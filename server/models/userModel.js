@@ -93,7 +93,7 @@ const userSchema = new Schema({
   email: { type: String, required: true, match: /.+\@.+\..+/, unique: true },
   password: String,
   lastSignIn: Date,
-  token: Number,
+  token: String,
   bikeData: {
     bikeName: { type: String, default: 'Your Bike' },
     bikeIconName: { type: String, default: 'mtb' },

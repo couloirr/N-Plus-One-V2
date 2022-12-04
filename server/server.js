@@ -1,7 +1,10 @@
 const express = require('express');
 const path = require('path');
+const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/userRouter');
+const stravaRouter = require('./routes/stravaRouter');
+const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
@@ -11,10 +14,22 @@ app.use(express.json());
 app.use(cookieParser());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  next();
+  return next();
 });
+app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: 'running a marathon',
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
 // app.use('/client', express.static(path.resolve(__dirname, '../client')));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/user', userRouter);
+app.use('/auth', stravaRouter);
 app.use('/assets', express.static(path.join(__dirname, '../client/assets')));
 
 app.use((req, res) =>

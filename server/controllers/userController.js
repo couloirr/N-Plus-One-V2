@@ -4,6 +4,7 @@ const userController = {};
 
 userController.getUser = async (req, res, next) => {
   const { email, password } = req.body;
+
   try {
     const currentUser = await User.findOne({ email: email });
     if (currentUser.password === password) {
