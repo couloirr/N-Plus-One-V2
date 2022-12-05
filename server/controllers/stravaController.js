@@ -95,8 +95,14 @@ stravaController.getRides = async (req, res, next) => {
           options.before = userDoc.lastSignIn;
         }
         const userActivities = await strava.athlete.listActivities(options);
-        console.log(userActivities);
-        res.locals.user = userActivities;
+        // console.log(userActivities);
+        const data = dataReducer(userActivities);
+        userDoc.rides.push(...data.rides);
+        userDoc.bikeData.bikeDistance += data.totals.totalMiles;
+        userDoc.bikeData.bikeElevation += data.totals.elevationGain;
+        userDoc.bikeData.bikeMovingTime += data.totals.movingTime;
+        const update = await userDoc.save();
+        res.locals.user = update;
         return next();
       }
     );
@@ -109,4 +115,30 @@ stravaController.getRides = async (req, res, next) => {
   }
 };
 
-function processRides(ridesArr) {}
+function dataReducer(data) {
+  let totalsObj = {
+    totalMiles: 0,
+    movingTime: 0,
+    elevationGain: 0,
+  };
+  const round = (num) => Math.round(num * 10) / 10;
+  const ridesArr = [];
+  data.forEach((el) => {
+    const { distance, moving_time, elapsed_time, total_elevation_gain, name } =
+      el;
+    if (el.type === 'Ride') {
+      totalsObj.totalMiles += round(distance / 1609);
+      totalsObj.movingTime += round(moving_time / 2600);
+      totalsObj.elevationGain += round(total_elevation_gain * 3.281);
+      ridesArr.push({
+        rideName: name,
+        rideElevation: round(total_elevation_gain * 3.281),
+        rideDistance: round(distance / 1609),
+        rideTime: round(elapsed_time / 2600),
+      });
+    }
+  });
+  totalsObj.movingTime = Math.round(totalsObj.movingTime * 10) / 10;
+  totalsObj.elevationGain = Math.round(totalsObj.elevationGain * 10) / 10;
+  return { totals: totalsObj, rides: ridesArr };
+}
