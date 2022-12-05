@@ -1,5 +1,5 @@
 const express = require('express');
-// const authController = require('../controllers/authController');
+const sessionController = require('../controllers/sessionController');
 const stravaController = require('../controllers/stravaController');
 const passport = require('passport');
 require('dotenv').config();
@@ -34,4 +34,12 @@ stravaRouter.get(
   }
 );
 
+stravaRouter.get(
+  '/update',
+  sessionController.isLoggedIn,
+  stravaController.getRides,
+  (req, res, next) => {
+    return res.status(200).send(res.locals.user);
+  }
+);
 module.exports = stravaRouter;
