@@ -8,9 +8,12 @@ const sessionController = {};
  */
 sessionController.isLoggedIn = async (req, res, next) => {
   try {
-    const sessionCookie = req.cookies.ssid;
+    let sessionCookie = req.cookies.ssid || null;
     console.log(req.cookies.ssid, 'cookies');
     // const userId = await Session.findOne({ cookieId: sessionCookie });
+    if (process.env.NODE_ENV === 'development') {
+      sessionCookie = process.env.DEV_COOKIE;
+    }
     const user = await User.findById({ _id: req.cookies.ssid });
     res.locals.user = user || false;
     return next();

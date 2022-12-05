@@ -30,7 +30,7 @@ stravaRouter.get(
     // return res.redirect(
     //   `http://localhost:8080/authenticate/?id=${id}&token=${token}`
     // );
-    res.status(200).send(res.locals.user);
+    res.status(200).redirect('http://localhost:8080/');
   }
 );
 

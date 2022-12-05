@@ -11,20 +11,6 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (user, done) {
   done(null, user);
 });
-// passport.use(
-//   new StravaStrategy(
-//     {
-//       clientID: process.env.STRAVA_CLIENT_ID,
-//       clientSecret: process.env.STRAVA_CLIENT_SECRET,
-//       callbackURL: process.env.STRAVA_CALLBACK,
-//     },
-//     async function (accessToken, refreshToken, profile, done) {
-//       console.log(accessToken);
-//       console.log(refreshToken);
-//       return done(null, profile);
-//     }
-//   )
-// );
 const strategy = new StravaStrategy(
   {
     clientID: process.env.STRAVA_CLIENT_ID,
@@ -95,7 +81,6 @@ stravaController.getRides = async (req, res, next) => {
           options.before = userDoc.lastSignIn;
         }
         const userActivities = await strava.athlete.listActivities(options);
-        // console.log(userActivities);
         const data = dataReducer(userActivities);
         userDoc.rides.push(...data.rides);
         userDoc.bikeData.bikeDistance += data.totals.totalMiles;
